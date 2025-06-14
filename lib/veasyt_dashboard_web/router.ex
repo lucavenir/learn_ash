@@ -6,6 +6,15 @@ defmodule VeasytDashboardWeb.Router do
 
   import AshAuthentication.Plug.Helpers
 
+  pipeline :mcp do
+    plug AshAuthentication.Strategy.ApiKey.Plug,
+      resource: VeasytDashboard.Accounts.User,
+      # Use `required?: false` to allow unauthenticated
+      # users to connect, for example if some tools
+      # are publicly accessible.
+      required?: true
+  end
+
   pipeline :graphql do
     plug :load_from_bearer
     plug :set_actor, :user
@@ -49,6 +58,20 @@ defmodule VeasytDashboardWeb.Router do
       # If an authenticated user must *not* be present:
       # on_mount {VeasytDashboardWeb.LiveUserAuth, :live_no_user}
     end
+  end
+
+  scope "/mcp" do
+    pipe_through :mcp
+
+    forward "/", AshAi.Mcp.Router,
+      tools: [
+        # list your tools here
+        # :tool1,
+        # :tool2,
+        # For many tools, you will need to set the `protocol_version_statement` to the older version.
+      ],
+      protocol_version_statement: "2024-11-05",
+      otp_app: :veasyt_dashboard
   end
 
   scope "/gql" do

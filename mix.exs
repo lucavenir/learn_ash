@@ -34,6 +34,8 @@ defmodule VeasytDashboard.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:usage_rules, "~> 0.1", only: [:dev]},
+      {:ash_ai, "~> 0.2"},
       {:ex_money_sql, "~> 1.0"},
       {:bcrypt_elixir, "~> 3.0"},
       {:picosat_elixir, "~> 0.2"},
